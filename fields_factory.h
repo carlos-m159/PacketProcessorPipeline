@@ -1,85 +1,27 @@
 #ifndef FIELDS_FACTORY_H
 #define FIELDS_FACTORY_H
 
-#include <iostream>
+#include <field_types.hpp>
 
-struct sField1_type
-{
-    uint32_t field;
-    std::string identifier = "Field 1";
-};
-
-struct sField2_type
-{
-    uint32_t field;
-    std::string identifier = "Field 2";
-};
-struct sField3_type
-{
-    uint32_t field;
-    std::string identifier = "Field 3";
-};
-
-typedef struct sMessage
-{
-    sField1_type header;
-    sField2_type body1;
-    sField3_type body2;
-
-} sMessage_tst;
-
-template <class TFactory>
-class cMessage
-{
-public:
-    cMessage (sMessage* ptr, TFactory* fac)
-        :
-          ptr(ptr),
-          factory(fac)
-    {
-
-    }
-
-    template <class TField>
-    void processField(TField* pointer)
-    {
-        factory->processField(pointer);
-    }
-
-    template <class TField>
-    void processFieldWithIndex(TField* pointer)
-    {
-        factory->processFieldWithIndx(pointer);
-    }
-
-    sMessage* ptr;
-
-    TFactory* factory;
-
-};
-
-template <class DERIVED>
+template <class TDerived>
 class TFieldFactoryAbs
 {
 public:
     /// @brief Abs C'tor
     TFieldFactoryAbs()
-    {
-    }
+    {}
 
     /// @brief Abs D'tor
     ~TFieldFactoryAbs()
-    {
-    }
+    {}
 
     /// @brief Call the Child process Implementation
     template <class TMessageField>
     bool process(TMessageField f1)
     {
-        static_cast<DERIVED*>(this)->processImpl(f1);
+        static_cast<TDerived*>(this)->processImpl(f1);
         return true;
     }
-
 };
 
 /// Field Implementation
@@ -135,6 +77,46 @@ public:
 
     /// @brief Process field
     void processImpl(sField3_type* ptr)
+    {
+        std::cout << "Processing " << ptr->identifier << std::endl;
+    }
+};
+
+class Field4 : public TFieldFactoryAbs<Field4>
+{
+public:
+    /// @brief Default C'tor
+    Field4()
+    {
+    }
+
+    /// @brief Default D'tor
+    ~Field4()
+    {
+    }
+
+    /// @brief Process field
+    void processImpl(sField4_type* ptr)
+    {
+        std::cout << "Processing " << ptr->identifier << std::endl;
+    }
+};
+
+class Field5 : public TFieldFactoryAbs<Field5>
+{
+public:
+    /// @brief Default C'tor
+    Field5()
+    {
+    }
+
+    /// @brief Default D'tor
+    ~Field5()
+    {
+    }
+
+    /// @brief Process field
+    void processImpl(sField5_type* ptr)
     {
         std::cout << "Processing " << ptr->identifier << std::endl;
     }

@@ -5,8 +5,6 @@
 #include <utility>
 #include <array>
 #include <fields_factory.h>
-class CPacket;
-
 
 template <typename ...TField>
 class TPacketFactory
@@ -46,6 +44,14 @@ class TPacketFactory
     template <size_t N>
     using sequence_t = typename seq_gen<N>::type;
 
+    /// @brief Get multiple tuple elements to process fields
+    template<size_t ... INDICES, class TIndividual>
+    void tuple_call_(sequence<INDICES...>, TTypeListElement& tupple, TIndividual* ptr)
+    {
+        processFields(ptr,std::get<INDICES>(tupple)...);
+    }
+
+
 public:
     /// @brief Default C'tor
     TPacketFactory()
@@ -66,21 +72,11 @@ public:
     {
         TTypeListElement field_tupple;
 
-        // Not very beautifull solution, but works
-        //std::get<idx>(field_tupple).process(ptr);
-
-        // Lets see who can work over this data
+        // Call all the constructor fields
         tuple_call_(sequence_t<sizeof...(TField)>{},field_tupple, ptr);
     }
 
-    /// @brief Get multiple tuple elements to process fields
-    template<size_t ... INDICES, class TIndividual>
-    void tuple_call_(sequence<INDICES...>, TTypeListElement& tupple, TIndividual* ptr)
-    {
-        processFields(ptr,std::get<INDICES>(tupple)...);
-    }
-
-    /// @brief Worker to call individual process based on the input
+    /// @brief Worker to call data types to the respective functions
     template<class TIndividual, class T>
     friend bool callIndividual(TIndividual* ptr, T field);
 
@@ -126,6 +122,23 @@ bool callIndividual(sField3_type* ptr, Field3 field)
     return true;
 }
 
+
+template<>
+bool callIndividual(sField4_type* ptr, Field4 field)
+{
+    // DO nothing
+    field.process(ptr);
+    return true;
+}
+
+
+template<>
+bool callIndividual(sField5_type* ptr, Field5 field)
+{
+    // DO nothing
+    field.process(ptr);
+    return true;
+}
 
 
 

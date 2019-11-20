@@ -8,5 +8,7 @@ SOURCES += \
         main.cpp
 
 HEADERS += \
+    field_types.hpp \
     fields_factory.h \
+    message_types.h \
     template_factories.h

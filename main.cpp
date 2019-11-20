@@ -5,80 +5,39 @@
 
 #include "fields_factory.h"
 #include "template_factories.h"
-
-
-class CMessage
-{
-public:
-    CMessage(sMessage_tst* ptr)
-        :
-          ptr(ptr)
-    {
-        // Increase instance counter
-        operationCounter()++;
-    }
-    ~CMessage()
-    {
-        // Decrease instance counter
-        operationCounter()--;
-    }
-
-    template <class T>
-    void createMessage(T& args)
-    {
-        // Here We can send the pointer to the memory
-        args.processFields();
-    }
-
-    uint32_t getCounter()
-    {
-        return operationCounter().load();
-    }
-
-private:
-
-    sMessage_tst* ptr;
-    std::atomic_uint32_t&  operationCounter()
-    {
-        static std::atomic_uint32_t m_counter = {0};
-        return m_counter;
-    }
-};
-
-
-// Specify packet factory fields
-
-using t1  = std::tuple<sField1_type, Field1>;
-using t2  = std::tuple<sField2_type, Field2>;
-using t3  = std::tuple<sField3_type, Field3>;
-
-
-//using packet1_factory_type = TPacketFactory<t1,t2,t3>;
-using packet1_factory_type = TPacketFactory<Field1, Field2, Field3>;
+#include "message_types.h"
 
 int main()
 {
-    // Memory Pool
-    sMessage pkt;
+    // Memory Pool for messages
+    sMessageLaserScan msg_LaserScan_0;
+    sMessageLaserScan msg_LaserScan_1;
+    sMessageCalibration msg_Calibration_0;
+    sMessageCalibration msg_Calibration_N;
 
     // Factory
-    packet1_factory_type factory_1;
+    LaserScanFactoryType factory_LaserScan;
+    CalibrationFactoryType factory_Calibration;
 
     // Message containing the ptr to factory
-    cMessage<packet1_factory_type> laserScanMessage(&pkt, factory_1);
+    LaserScanMessage msg0(&msg_LaserScan_0, factory_LaserScan);
+    LaserScanMessage msg1(&msg_LaserScan_0, factory_LaserScan);
+    CalibrationMessage msg2(&msg_Calibration_0, factory_Calibration);
+    CalibrationMessage msg3(&msg_Calibration_0, factory_Calibration);
 
-    // Process Packet
-    // Cons: Having a friend method to allow the template specialization
-    laserScanMessage.processField(&pkt.body1);
-    laserScanMessage.processField(&pkt.header);
-    laserScanMessage.processField(&pkt.body2);
+    // Process Messages
+    std::cout << "\nLaser Scan" << std::endl;
+    msg0.process();
+    msg1.process();
 
-    // Process with indx
-    // Cons: Keeping track of the index
-    laserScanMessage.processFieldWithIndex<1>(&pkt.body1);
-    laserScanMessage.processFieldWithIndex<0>(&pkt.header);
-    laserScanMessage.processFieldWithIndex<2>(&pkt.body2);
+    std::cout << "\nCalibration" << std::endl;
+    msg2.process();
+    msg3.process();
 
+    // Specific routine for 1 message or 2
+    std::cout << "\nSpecific Routines" << std::endl;
+    msg0.specificMessageRoutine();
+    msg1.specificMessageRoutine();
 
     return 0;
 }
