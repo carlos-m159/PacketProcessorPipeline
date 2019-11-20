@@ -3,14 +3,18 @@
 
 #include <iostream>
 #include <utility>
-
+#include <array>
+#include <fields_factory.h>
 class CPacket;
 
-template <class ...TField>
+
+template <typename ...TField>
 class TPacketFactory
 {
     /// @brief ...
     using TTypeListElement = typename std::tuple<TField...>;
+    //using container = std::array<TField...,sizeof... (TField)>;
+    //using TTypeListElement = TField;
 
     // C++11 Work around
     // C++14 we can use make index
@@ -48,29 +52,82 @@ public:
     {
     }
 
+    /// @brief Process Field saying the index of the field to process
+    template <size_t idx,class TIndividual>
+    void processFieldWithIndx(TIndividual* ptr)
+    {
+        TTypeListElement field_tupple;
+        std::get<idx>(field_tupple).process(ptr);
+    }
+
     /// @brief Process Packet
-    void processPacket(CPacket* ptr)
+    template <class TIndividual>
+    void processField(TIndividual* ptr)
     {
         TTypeListElement field_tupple;
 
-        tuple_call_(sequence_t<sizeof...(TField)>{},field_tupple);
+        // Not very beautifull solution, but works
+        //std::get<idx>(field_tupple).process(ptr);
+
+        // Lets see who can work over this data
+        tuple_call_(sequence_t<sizeof...(TField)>{},field_tupple, ptr);
     }
 
     /// @brief Get multiple tuple elements to process fields
-    template<size_t ... INDICES>
-    void tuple_call_(sequence<INDICES...>, TTypeListElement& tupple)
+    template<size_t ... INDICES, class TIndividual>
+    void tuple_call_(sequence<INDICES...>, TTypeListElement& tupple, TIndividual* ptr)
     {
-        processFields(std::get<INDICES>(tupple)...);
+        processFields(ptr,std::get<INDICES>(tupple)...);
     }
 
+    /// @brief Worker to call individual process based on the input
+    template<class TIndividual, class T>
+    friend bool callIndividual(TIndividual* ptr, T field);
+
     /// @brief Processing single fields, unpack different tupple elements
-    template<class ...T>
-    void processFields(T... field)
+    template<class TIndividual, class ...T>
+    void processFields( TIndividual* ptr,T... field)
     {
-        bool test[] = {field.process()...};
+        bool dummy [] = {callIndividual(ptr, field)...};
     }
 
 };
+
+
+template<class TIndividual, class T>
+bool callIndividual(TIndividual* ptr, T field)
+{
+    // DO nothing
+}
+
+template<>
+bool callIndividual(sField1_type* ptr, Field1 field)
+{
+    // DO nothing
+    field.process(ptr);
+    return true;
+}
+
+
+template<>
+bool callIndividual(sField2_type* ptr, Field2 field)
+{
+    // DO nothing
+    field.process(ptr);
+    return true;
+}
+
+
+template<>
+bool callIndividual(sField3_type* ptr, Field3 field)
+{
+    // DO nothing
+    field.process(ptr);
+    return true;
+}
+
+
+
 
 
 #endif // TEMPLATE_FACTORIES_H

@@ -3,6 +3,61 @@
 
 #include <iostream>
 
+struct sField1_type
+{
+    uint32_t field;
+    std::string identifier = "Field 1";
+};
+
+struct sField2_type
+{
+    uint32_t field;
+    std::string identifier = "Field 2";
+};
+struct sField3_type
+{
+    uint32_t field;
+    std::string identifier = "Field 3";
+};
+
+typedef struct sMessage
+{
+    sField1_type header;
+    sField2_type body1;
+    sField3_type body2;
+
+} sMessage_tst;
+
+template <class TFactory>
+class cMessage
+{
+public:
+    cMessage (sMessage* ptr, TFactory* fac)
+        :
+          ptr(ptr),
+          factory(fac)
+    {
+
+    }
+
+    template <class TField>
+    void processField(TField* pointer)
+    {
+        factory->processField(pointer);
+    }
+
+    template <class TField>
+    void processFieldWithIndex(TField* pointer)
+    {
+        factory->processFieldWithIndx(pointer);
+    }
+
+    sMessage* ptr;
+
+    TFactory* factory;
+
+};
+
 template <class DERIVED>
 class TFieldFactoryAbs
 {
@@ -18,9 +73,10 @@ public:
     }
 
     /// @brief Call the Child process Implementation
-    bool process()
+    template <class TMessageField>
+    bool process(TMessageField f1)
     {
-        static_cast<DERIVED*>(this)->processImpl();
+        static_cast<DERIVED*>(this)->processImpl(f1);
         return true;
     }
 
@@ -37,9 +93,9 @@ public:
     }
 
     /// @brief Process field
-    void processImpl()
+    void processImpl(sField1_type* ptr)
     {
-        std::cout << "Processing Field1!" << std::endl;
+        std::cout << "Processing " << ptr->identifier << std::endl;
     }
 };
 
@@ -58,9 +114,9 @@ public:
 
 
     /// @brief Process field
-    void processImpl()
+    void processImpl(sField2_type* ptr)
     {
-        std::cout << "Process Field2!" << std::endl;
+        std::cout << "Processing " << ptr->identifier << std::endl;
     }
 };
 
@@ -78,9 +134,9 @@ public:
     }
 
     /// @brief Process field
-    void processImpl()
+    void processImpl(sField3_type* ptr)
     {
-        std::cout << "Process Field3!" << std::endl;
+        std::cout << "Processing " << ptr->identifier << std::endl;
     }
 };
 
