@@ -2,7 +2,6 @@
 #include <atomic>
 #include <thread>
 #include <utility>
-
 #include "fields_factory.h"
 #include "template_factories.h"
 #include "message_types.h"
@@ -38,6 +37,15 @@ int main()
     std::cout << "\nSpecific Routines" << std::endl;
     msg0.specificMessageRoutine();
     msg1.specificMessageRoutine();
+
+
+
+
+//    std::map<type_id_t, Node> nodes;
+
+//    nodes[type_id<AType>] = Node{...};
+//    nodes[type_id<BType>] = Node{...};
+
 
     return 0;
 }

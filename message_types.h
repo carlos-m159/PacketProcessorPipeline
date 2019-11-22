@@ -6,6 +6,14 @@
 #include <atomic>
 
 /// Here define the Factories:
+/// Linking Data Types with workers
+using Field1 = std::pair<sField1_type, Field1Worker>;
+using Field2 = std::pair<sField2_type, Field2Worker>;
+using Field3 = std::pair<sField3_type, Field3Worker>;
+using Field4 = std::pair<sField4_type, Field4Worker>;
+using Field5 = std::pair<sField5_type, Field5Worker>;
+
+
 using LaserScanFactoryType = TPacketFactory<Field1, Field2, Field3>;
 using CalibrationFactoryType = TPacketFactory<Field4,Field5>;
 
@@ -89,7 +97,6 @@ public:
     void specificMessageRoutine()
     {
         // Specific routine
-        std::cout << "This is a specific Message Routine" << std::endl;
         processField(&this->m_msg_ptr->header);
     }
 };
@@ -118,10 +125,7 @@ public:
     void specificMessageRoutine()
     {
         // Specific routine
-        std::cout << "This is a specific Message Routine" << std::endl;
     }
 };
-
-
 
 #endif // MESSAGE_TEMPLATE_H

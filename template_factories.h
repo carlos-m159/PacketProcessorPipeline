@@ -6,10 +6,34 @@
 #include <array>
 #include <fields_factory.h>
 
+
 template <typename ...TField>
 class TPacketFactory
 {
+private:
     /// @brief ...
+    template<bool Cond, typename T>
+    using accept_if = typename std::conditional<Cond,T,void>::type;
+
+    /// @brief Dummy structure to filter types
+    template < typename TPtr, typename TTuple, typename validity> struct sFilter
+    {
+        sFilter(TPtr* ptr, TTuple thistuple)
+        {
+            std::get<1>(thistuple).process(ptr);
+        }
+    };
+
+    /// @brief Specialization of the dummy structure
+    template<typename TPtr, typename TTuple> struct sFilter<TPtr,TTuple,void>
+    {
+        sFilter(TPtr* ptr, TTuple thistuple)
+        {
+            // Do Nothing
+        }
+    };
+
+    /// @brief Create compile time sequence
     using TTypeListElement = typename std::tuple<TField...>;
     //using container = std::array<TField...,sizeof... (TField)>;
     //using TTypeListElement = TField;
@@ -51,95 +75,40 @@ class TPacketFactory
         processFields(ptr,std::get<INDICES>(tupple)...);
     }
 
-
 public:
+
     /// @brief Default C'tor
     TPacketFactory()
     {
-    }
-
-    /// @brief Process Field saying the index of the field to process
-    template <size_t idx,class TIndividual>
-    void processFieldWithIndx(TIndividual* ptr)
-    {
-        TTypeListElement field_tupple;
-        std::get<idx>(field_tupple).process(ptr);
     }
 
     /// @brief Process Packet
     template <class TIndividual>
     void processField(TIndividual* ptr)
     {
+        // Field
         TTypeListElement field_tupple;
 
-        // Call all the constructor fields
+        // Get the element from the pair
         tuple_call_(sequence_t<sizeof...(TField)>{},field_tupple, ptr);
     }
 
-    /// @brief Worker to call data types to the respective functions
+    /// @brief For each interface, call the process if available
     template<class TIndividual, class T>
-    friend bool callIndividual(TIndividual* ptr, T field);
+    bool callIndividual(TIndividual* ptr, T field)
+    {
+        // TODO: Explore the possibility of using a recursive template function to check the Idx of the correct field.
+        sFilter<TIndividual, T, accept_if<std::is_same<typeof  (std::get<0>(field)),typeof (*ptr)>::value, bool>>(ptr, field);
+    }
 
     /// @brief Processing single fields, unpack different tupple elements
     template<class TIndividual, class ...T>
     void processFields( TIndividual* ptr,T... field)
-    {
+    {       
+        // Call the function for each index
         bool dummy [] = {callIndividual(ptr, field)...};
     }
-
 };
-
-
-template<class TIndividual, class T>
-bool callIndividual(TIndividual* ptr, T field)
-{
-    // DO nothing
-}
-
-template<>
-bool callIndividual(sField1_type* ptr, Field1 field)
-{
-    // DO nothing
-    field.process(ptr);
-    return true;
-}
-
-
-template<>
-bool callIndividual(sField2_type* ptr, Field2 field)
-{
-    // DO nothing
-    field.process(ptr);
-    return true;
-}
-
-
-template<>
-bool callIndividual(sField3_type* ptr, Field3 field)
-{
-    // DO nothing
-    field.process(ptr);
-    return true;
-}
-
-
-template<>
-bool callIndividual(sField4_type* ptr, Field4 field)
-{
-    // DO nothing
-    field.process(ptr);
-    return true;
-}
-
-
-template<>
-bool callIndividual(sField5_type* ptr, Field5 field)
-{
-    // DO nothing
-    field.process(ptr);
-    return true;
-}
-
 
 
 

@@ -25,11 +25,16 @@ public:
 };
 
 /// Field Implementation
-class Field1 : public TFieldFactoryAbs<Field1>
+class Field1Worker : public TFieldFactoryAbs<Field1Worker>
 {
 public:
     /// @brief Default C'tor
-    Field1()
+    Field1Worker()
+    {
+
+    }
+
+    ~Field1Worker()
     {
 
     }
@@ -41,16 +46,16 @@ public:
     }
 };
 
-class Field2 : public TFieldFactoryAbs<Field2>
+class Field2Worker : public TFieldFactoryAbs<Field2Worker>
 {
 public:
     /// @brief Default C'tor
-    Field2()
+    Field2Worker()
     {
     }
 
     /// @brief Default D'tor
-    ~Field2()
+    ~Field2Worker()
     {
     }
 
@@ -62,16 +67,16 @@ public:
     }
 };
 
-class Field3 : public TFieldFactoryAbs<Field3>
+class Field3Worker : public TFieldFactoryAbs<Field3Worker>
 {
 public:
     /// @brief Default C'tor
-    Field3()
+    Field3Worker()
     {
     }
 
     /// @brief Default D'tor
-    ~Field3()
+    ~Field3Worker()
     {
     }
 
@@ -82,16 +87,16 @@ public:
     }
 };
 
-class Field4 : public TFieldFactoryAbs<Field4>
+class Field4Worker : public TFieldFactoryAbs<Field4Worker>
 {
 public:
     /// @brief Default C'tor
-    Field4()
+    Field4Worker()
     {
     }
 
     /// @brief Default D'tor
-    ~Field4()
+    ~Field4Worker()
     {
     }
 
@@ -102,16 +107,16 @@ public:
     }
 };
 
-class Field5 : public TFieldFactoryAbs<Field5>
+class Field5Worker : public TFieldFactoryAbs<Field5Worker>
 {
 public:
     /// @brief Default C'tor
-    Field5()
+    Field5Worker()
     {
     }
 
     /// @brief Default D'tor
-    ~Field5()
+    ~Field5Worker()
     {
     }
 
