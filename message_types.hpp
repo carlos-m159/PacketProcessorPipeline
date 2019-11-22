@@ -1,9 +1,10 @@
 #ifndef MESSAGE_TEMPLATE_H
 #define MESSAGE_TEMPLATE_H
 
-#include <template_factories.h>
-#include <fields_factory.h>
 #include <atomic>
+
+#include "worker_types.hpp"
+#include "factory_template.hpp"
 
 /// Here define the Factories:
 /// Linking Data Types with workers
@@ -13,10 +14,8 @@ using Field3 = std::pair<sField3_type, Field3Worker>;
 using Field4 = std::pair<sField4_type, Field4Worker>;
 using Field5 = std::pair<sField5_type, Field5Worker>;
 
-
 using LaserScanFactoryType = TPacketFactory<Field1, Field2, Field3>;
 using CalibrationFactoryType = TPacketFactory<Field4,Field5>;
-
 
 /// Message Definition
 template <typename TDerived, typename TMessageType, typename TFactory>

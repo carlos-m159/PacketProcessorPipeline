@@ -44,6 +44,4 @@ struct sMessageCalibration
     sField5_type body1;
 };
 
-
-
 #endif // FIELD_TYPES_HPP

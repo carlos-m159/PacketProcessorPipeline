@@ -3,9 +3,8 @@
 
 #include <iostream>
 #include <utility>
-#include <array>
-#include <fields_factory.h>
 
+#include "field_template.hpp"
 
 template <typename ...TField>
 class TPacketFactory
@@ -27,10 +26,7 @@ private:
     /// @brief Specialization of the dummy structure
     template<typename TPtr, typename TTuple> struct sFilter<TPtr,TTuple,void>
     {
-        sFilter(TPtr* ptr, TTuple thistuple)
-        {
-            // Do Nothing
-        }
+        sFilter(TPtr* ptr, TTuple thistuple){}
     };
 
     /// @brief Create compile time sequence
